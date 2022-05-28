@@ -2,7 +2,5 @@ git add -A
 cnt=`cat num.txt`
 git commit -m $cnt
 git push
-rm socow-vector.h
-echo > socow-vector.h
 let cnt+=1
 echo $cnt > "num.txt"
