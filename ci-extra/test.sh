@@ -14,13 +14,13 @@ cmake-build-$1/ci-extra/perf/base_bench_logger --benchmark_format=json > logger_
 cmake-build-$1/ci-extra/perf/base_bench_pi     --benchmark_format=json > pi_base.json
 cmake-build-$1/ci-extra/perf/base_bench_radix_sort   --benchmark_format=json > sort_base.json
 
+echo "Testing pi..."
+python3 ci-extra/check.py pi_fix.json pi_base.json 10
 echo "Testing json..."
 python3 ci-extra/check.py json_fix.json json_base.json 1.4
 echo "Testing jpeg..."
 python3 ci-extra/check.py jpeg_fix.json jpeg_base.json 4
 echo "Testing logger..."
 python3 ci-extra/check.py logger_fix.json logger_base.json 6
-echo "Testing pi..."
-python3 ci-extra/check.py pi_fix.json pi_base.json 10
 echo "Testing sort..."
 python3 ci-extra/check.py sort_fix.json sort_base.json 1.2
