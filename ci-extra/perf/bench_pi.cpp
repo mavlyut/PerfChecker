@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <random>
+#include <ctime>
 
 // Computes PI using monte carlo method.
 // DO NOT change the algorithm.
@@ -10,7 +11,7 @@ void BM_ComputePi(benchmark::State& state) {
   int64_t total = 0;
   int64_t inside_circle = 0;
 
-  srand(42);
+  srand(time(NULL));
 
   for (auto _ : state) {
     int x = rand() % 1000;
