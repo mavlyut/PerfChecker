@@ -8,11 +8,7 @@ struct User {
 };
 
 std::ostream& operator<<(std::ostream& out, const User& user) {
-  out << "{"
-      << "\"id\":" << user.id << ","
-      << "\"username\":\"" << user.username << "\""
-      << "}";
-  return out;
+    return out << R"({"id":)" << user.id << R"(,"username":")" << user.username << R"("})";
 }
 
 std::string ToJson(const User& user) {
