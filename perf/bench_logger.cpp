@@ -35,15 +35,15 @@ public:
     write_buf(msg.substr(cnt * BUFSIZE, msg.size()));
   }
 
-private:
-  int fd_ = -1;
-
-  void write_buf(const std::string& buf) {
-    if (::write(fd_, buf.data(), buf.size()) !=
-        static_cast<ssize_t>(buf.size())) {
+  void write_buf(const std::string& msg) const {
+    if (::write(fd_, msg.data(), msg.size()) !=
+        static_cast<ssize_t>(msg.size())) {
       throw std::system_error(errno, std::system_category(), "write");
     }
   }
+
+private:
+  int fd_ = -1;
 };
 
 static Logger TestLogger{"/tmp/benchmark_logger"};
