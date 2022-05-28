@@ -25,6 +25,6 @@ void BM_ComputePi(benchmark::State& state) {
   state.counters["pi"] = 4 * double(inside_circle) / total;
 }
 
-BENCHMARK(BM_ComputePi)->Threads(2);
+BENCHMARK(BM_ComputePi)->Threads(1);
 
 BENCHMARK_MAIN();
