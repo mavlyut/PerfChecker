@@ -3,7 +3,7 @@
 #include <random>
 #include <vector>
 
-typedef std::vector<int> Pixel;
+typedef int Pixel[3];
 
 typedef std::vector<std::vector<Pixel>> Picture;
 
@@ -18,7 +18,7 @@ Picture MakeRandom() {
     picture.emplace_back();
     for (size_t j = 0; j < WIDTH; j++) {
       picture.back().emplace_back() =
-          Pixel{randomPixel(engine), randomPixel(engine), randomPixel(engine)};
+          {randomPixel(engine), randomPixel(engine), randomPixel(engine)};
     }
   }
   return picture;
@@ -39,7 +39,7 @@ Picture ScaleDown(const Picture& picture) {
       };
 
       scaled.back().emplace_back() =
-          Pixel{avgComponent(0), avgComponent(1), avgComponent(2)};
+          {avgComponent(0), avgComponent(1), avgComponent(2)};
     }
   }
 
