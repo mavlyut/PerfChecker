@@ -3,7 +3,7 @@
 #include <random>
 #include <vector>
 
-typedef int Pixel[3];
+typedef srd::array<int, 3> Pixel;
 
 typedef std::vector<std::vector<Pixel>> Picture;
 
@@ -17,7 +17,8 @@ Picture MakeRandom() {
   for (size_t i = 0; i < HEIGHT; i++) {
     picture.emplace_back();
     for (size_t j = 0; j < WIDTH; j++) {
-      picture.back().push_back(Pixel{randomPixel(engine), randomPixel(engine), randomPixel(engine)});
+      picture.back().emplace_back() =
+          Pixel{randomPixel(engine), randomPixel(engine), randomPixel(engine)};
     }
   }
   return picture;
