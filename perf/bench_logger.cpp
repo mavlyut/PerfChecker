@@ -29,9 +29,8 @@ public:
   }
 
   void Write(const std::string& msg) const {
-    char* buf = new char[BUFSIZE];
     size_t i = 0;
-    for (; i + BUFSIZE < msg.size(); i++) {
+    for (; i + BUFSIZE < msg.size(); i += BUFSIZE) {
       strncpy(buf, msg.data() + i, BUFSIZE);
       write_buf(buf);
     }
@@ -41,13 +40,14 @@ public:
   }
 
   void write_buf(const char* msg, size_t _size = BUFSIZE) const {
-    if (::write(fd_, msg, _size) != _size) {
+    if (::write(fd_, msg, _size) != static_cast<ssize_t>(_size)) {
       throw std::system_error(errno, std::system_category(), "write");
     }
   }
 
 private:
   int fd_ = -1;
+  char* buf = new char[BUFSIZE];
 };
 
 static Logger TestLogger{"/tmp/benchmark_logger"};
