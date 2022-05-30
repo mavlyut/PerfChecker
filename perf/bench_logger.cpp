@@ -29,13 +29,14 @@ public:
   }
 
   void Write(const std::string& msg) const {
-    size_t i = 0;
+    size_t i = 0, msg_size = msg.size();
     for (; i + BUFSIZE < msg.size(); i += BUFSIZE) {
       strcpy(buf, msg.data() + i);
       write_buf(buf);
+      msg_size -= BUFSIZE;
     }
     strcpy(buf, msg.data() + i);
-    write_buf(buf, msg.size() % BUFSIZE);
+    write_buf(buf, msg_size);
   }
 
   void write_buf(const char* msg, size_t _size = BUFSIZE) const {
