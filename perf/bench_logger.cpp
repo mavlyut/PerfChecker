@@ -21,43 +21,37 @@ public:
 
   ~Logger() {
     if (fd_ != -1) {
+      write_buf(buf, tmp_buf_size);
       ::close(fd_);
       fd_ = -1;
     }
   }
 
-
   void Write(const std::string& msg) {
-    if (msg.size() + pos_ > BUFSIZE) {
-      if (::write(fd_, buf, pos_) !=
-          static_cast<ssize_t>(pos_)) {
-        throw std::system_error(errno, std::system_category(), "write");
-      }
-      pos_ = 0;
+    if (msg.size() + tmp_buf_size > BUFSIZE) {
+      write_buf(buf, tmp_buf_size);
+      tmp_buf_size = 0;
     }
     if (msg.size() > BUFSIZE) {
-      if (::write(fd_, msg.data(), msg.size()) !=
-          static_cast<ssize_t>(msg.size())) {
-        throw std::system_error(errno, std::system_category(), "write");
-      }
+      write_buf(msg.data(), msg.size());
     } else {
-      msg.copy(buf + pos_, msg.size());
-      pos_ += msg.size();
+      msg.copy(buf + tmp_buf_size, msg.size());
+      tmp_buf_size += msg.size();
     }
   }
 
 private:
-  int fd_ = -1, pos_ = 0;
-  char* buf;
-};
+  int fd_ = -1;
+  size_t tmp_buf_size = 0;
+  char* buf = new char[BUFSIZE];
 
-static Logger TestLogger{"/tmp/benchmark_logger"};
-
-void BM_Logger(benchmark::State& state) {
-  for (auto _ : state) {
-    TestLogger.Write("Test Message\n");
+  void write_buf(const char* data, size_t len) const {
+    if (::write(fd_, data, len) !=
+        static_cast<ssize_t>(len)) {
+      throw std::system_error(errno, std::system_category(), "write");
+    }
   }
-}
+};
 
 BENCHMARK(BM_Logger)->Threads(1);
 
