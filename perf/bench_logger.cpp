@@ -30,18 +30,18 @@ public:
 
   void Write(const std::string& msg) const {
     char* buf = new char[BUFSIZE];
-    size_t max_cnt = msg.size() / BUFSIZE;
-    for (size_t i = 0; i < max_cnt; i++) {
-      strncpy(buf, msg.data() + i * BUFSIZE, BUFSIZE);
+    size_t i = 0;
+    for (; i + BUFSIZE < msg.size(); i++) {
+      strncpy(buf, msg.data() + i, BUFSIZE);
       write_buf(buf);
     }
     size_t small_size = msg.size() % BUFSIZE;
-    strncpy(buf, msg.data() + max_cnt * BUFSIZE, small_size);
+    strncpy(buf, msg.data() + i, small_size);
     write_buf(buf, small_size);
   }
 
   void write_buf(const char* msg, size_t _size = BUFSIZE) const {
-    if (::write(fd_, msg, _size) != static_cast<ssize_t>(_size)) {
+    if (::write(fd_, msg, _size) != _size) {
       throw std::system_error(errno, std::system_category(), "write");
     }
   }
