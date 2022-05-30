@@ -10,7 +10,8 @@ void BM_ComputePi(benchmark::State& state) {
   int64_t total = 0;
   int64_t inside_circle = 0;
 
-  srand(42);
+  std::default_random_engine engine(42);
+  std::uniform_int_distribution<int> randomInt(0, 1000);
 
   for (auto _ : state) {
     int x = rand() % 1000;
