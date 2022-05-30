@@ -21,33 +21,31 @@ public:
 
   ~Logger() {
     if (fd_ != -1) {
-      write_buf(buf, tmp_buf_size);
+      write_buf(buf);
       ::close(fd_);
       fd_ = -1;
     }
   }
 
   void Write(const std::string& msg) {
-    if (msg.size() + tmp_buf_size > BUFSIZE) {
-      write_buf(buf, tmp_buf_size);
-      tmp_buf_size = 0;
+    if (msg.size() + buf.size() > BUFSIZE) {
+      write_buf(buf);
+      buf = "";
     }
     if (msg.size() > BUFSIZE) {
-      write_buf(msg.data(), msg.size());
+      write_buf(msg);
     } else {
-      msg.copy(buf + tmp_buf_size, msg.size());
-      tmp_buf_size += msg.size();
+      buf += msg;
     }
   }
 
 private:
   int fd_ = -1;
-  size_t tmp_buf_size = 0;
-  char* buf = new char[BUFSIZE];
+  std::string buf;
 
-  void write_buf(const char* data, size_t len) const {
-    if (::write(fd_, data, len) !=
-        static_cast<ssize_t>(len)) {
+  void write_buf(std::string const& str) const {
+    if (::write(fd_, str.data(), str.size()) !=
+        static_cast<ssize_t>(str.size())) {
       throw std::system_error(errno, std::system_category(), "write");
     }
   }
