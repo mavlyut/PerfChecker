@@ -29,25 +29,29 @@ public:
   }
 
 
-  void Write(const std::string& msg) const {
-    size_t i = 0, msg_size = msg.size();
-    for (; i + BUFSIZE < msg.size(); i += BUFSIZE, msg_size -= BUFSIZE) {
-      strcpy(buf, msg.data() + i);
-      write_buf(buf);
+  void Write(const std::string& msg) {
+    if (msg.size() + pos_ > BUFSIZE) {
+      write_buf(buf, pos_);
+      pos_ = 0;
     }
-    strcpy(buf, msg.data() + i);
-    write_buf(buf, msg_size);
-  }
-
-  void write_buf(const char* msg, size_t _size = BUFSIZE) const {
-    if (::write(fd_, msg, _size) != static_cast<ssize_t>(_size)) {
-      throw std::system_error(errno, std::system_category(), "write");
+    if (msg.size() > BUFSIZE) {
+      write_buf(msg.data(), msg.size());
+    } else {
+      msg.copy(buf + pos_, msg.size());
+      pos_ += msg.size();
     }
   }
 
 private:
-  int fd_ = -1;
-  char* buf = new char[BUFSIZE];
+  int fd_ = -1, pos_ = 0;
+  char* buf;
+
+  void write_buf(char const* data, size_t len) const {
+    if (::write(fd_, data, len) !=
+        static_cast<ssize_t>(len)) {
+      throw std::system_error(errno, std::system_category(), "write");
+    }
+  }
 };
 
 static Logger TestLogger{"/tmp/benchmark_logger"};
