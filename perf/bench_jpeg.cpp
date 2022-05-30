@@ -17,8 +17,7 @@ Picture MakeRandom() {
   for (size_t i = 0; i < HEIGHT; i++) {
     picture.emplace_back();
     for (size_t j = 0; j < WIDTH; j++) {
-      picture.back().emplace_back() =
-          Pixel{randomPixel(engine), randomPixel(engine), randomPixel(engine)};
+      picture.back().push_back(Pixel{randomPixel(engine), randomPixel(engine), randomPixel(engine)});
     }
   }
   return picture;
