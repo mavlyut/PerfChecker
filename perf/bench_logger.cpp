@@ -7,6 +7,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "string.h"
+
 #define BUFSIZE 4096
 
 // try to optimize without removing syscalls!
