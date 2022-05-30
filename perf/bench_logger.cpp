@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define BUFSIZE 1024
+#define BUFSIZE 4096
 
 // try to optimize without removing syscalls!
 class Logger {
@@ -26,18 +26,20 @@ public:
     }
   }
 
-  void Write(const std::string& msg) {
-    size_t cnt = msg.size() / BUFSIZE;
-    for (size_t i = 1; i < cnt; i++) {
-      std::string tmp = msg.substr((i - 1) * BUFSIZE, i * BUFSIZE);
-      write_buf(tmp);
+  void Write(const std::string& msg) const {
+    char* buf = new char[BUFSIZE];
+    size_t max_cnt = msg.size() / BUFSIZE;
+    for (size_t i = 0; i < max_cnt; i++) {
+      strncpy(buf, msg.data() + i * BUFSIZE, BUFSIZE);
+      write_buf(buf);
     }
-    write_buf(msg.substr(cnt * BUFSIZE, msg.size()));
+    char* tmp = new char[msg.size() % BUFSIZE];
+    strncpy(tmp, msg.data() + max_cnt * BUFSIZE, msg.size() % BUFSIZE);
+    write_buf(buf);
   }
 
-  void write_buf(const std::string& msg) const {
-    if (::write(fd_, msg.data(), msg.size()) !=
-        static_cast<ssize_t>(msg.size())) {
+  void write_buf(const char* msg) const {
+    if (::write(fd_, msg, BUFSIZE) != static_cast<ssize_t>(BUFSIZE)) {
       throw std::system_error(errno, std::system_category(), "write");
     }
   }
