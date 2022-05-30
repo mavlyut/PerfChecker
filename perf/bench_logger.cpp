@@ -30,14 +30,14 @@ public:
   void Write(const std::string& msg) {
     if (msg.size() + pos_ > BUFSIZE) {
       if (::write(fd_, buf, pos_) !=
-          static_cast<ssize_t>(len)) {
+          static_cast<ssize_t>(pos_)) {
         throw std::system_error(errno, std::system_category(), "write");
       }
       pos_ = 0;
     }
     if (msg.size() > BUFSIZE) {
       if (::write(fd_, msg.data(), msg.size()) !=
-          static_cast<ssize_t>(len)) {
+          static_cast<ssize_t>(msg.size())) {
         throw std::system_error(errno, std::system_category(), "write");
       }
     } else {
