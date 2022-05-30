@@ -7,8 +7,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "string.h"
-
 #define BUFSIZE 4096
 
 // try to optimize without removing syscalls!
@@ -31,11 +29,17 @@ public:
 
   void Write(const std::string& msg) {
     if (msg.size() + pos_ > BUFSIZE) {
-      write_buf(buf, pos_);
+      if (::write(fd_, data, len) !=
+          static_cast<ssize_t>(len)) {
+        throw std::system_error(errno, std::system_category(), "write");
+      }
       pos_ = 0;
     }
     if (msg.size() > BUFSIZE) {
-      write_buf(msg.data(), msg.size());
+      if (::write(fd_, data, len) !=
+          static_cast<ssize_t>(len)) {
+        throw std::system_error(errno, std::system_category(), "write");
+      }
     } else {
       msg.copy(buf + pos_, msg.size());
       pos_ += msg.size();
@@ -45,13 +49,6 @@ public:
 private:
   int fd_ = -1, pos_ = 0;
   char* buf;
-
-  void write_buf(char const* data, size_t len) const {
-    if (::write(fd_, data, len) !=
-        static_cast<ssize_t>(len)) {
-      throw std::system_error(errno, std::system_category(), "write");
-    }
-  }
 };
 
 static Logger TestLogger{"/tmp/benchmark_logger"};
