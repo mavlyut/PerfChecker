@@ -18,7 +18,7 @@ Picture MakeRandom() {
     picture.emplace_back();
     for (size_t j = 0; j < WIDTH; j++) {
       picture.back().emplace_back() =
-          {randomPixel(engine), randomPixel(engine), randomPixel(engine)};
+          Pixel{randomPixel(engine), randomPixel(engine), randomPixel(engine)};
     }
   }
   return picture;
@@ -39,7 +39,7 @@ Picture ScaleDown(const Picture& picture) {
       };
 
       scaled.back().emplace_back() =
-          {avgComponent(0), avgComponent(1), avgComponent(2)};
+          Pixel{avgComponent(0), avgComponent(1), avgComponent(2)};
     }
   }
 
