@@ -31,11 +31,11 @@ size_t CountZeroBit(const std::vector<uint64_t>& input, int bit) {
 
 // DO NOT change the algorithm.
 void RadixSort(std::vector<uint64_t>* input) {
+  std::vector<uint64_t> buffer;
+  buffer.resize(input->size());
+
   for (int bit = 0; bit < 64; ++bit) {
     auto count = CountZeroBit(*input, bit);
-
-    std::vector<uint64_t> buffer;
-    buffer.resize(input->size());
 
     size_t i = 0, j = count;
     for (auto e : *input) {

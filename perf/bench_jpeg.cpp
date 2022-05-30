@@ -3,7 +3,7 @@
 #include <random>
 #include <vector>
 
-typedef std::vector<int> Pixel;
+typedef std::array<int, 3> Pixel;
 
 typedef std::vector<std::vector<Pixel>> Picture;
 

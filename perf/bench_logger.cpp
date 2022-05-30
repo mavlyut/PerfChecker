@@ -7,6 +7,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#define BUFSIZE 4096
+
 // try to optimize without removing syscalls!
 class Logger {
 public:
@@ -19,20 +21,34 @@ public:
 
   ~Logger() {
     if (fd_ != -1) {
+      write_buf(buf);
       ::close(fd_);
       fd_ = -1;
     }
   }
 
   void Write(const std::string& msg) {
-    if (::write(fd_, msg.data(), msg.size()) !=
-        static_cast<ssize_t>(msg.size())) {
-      throw std::system_error(errno, std::system_category(), "write");
+    if (msg.size() + buf.size() > BUFSIZE) {
+      write_buf(buf);
+      buf = "";
+    }
+    if (msg.size() > BUFSIZE) {
+      write_buf(msg);
+    } else {
+      buf += msg;
     }
   }
 
 private:
   int fd_ = -1;
+  std::string buf;
+
+  void write_buf(std::string const& str) const {
+    if (::write(fd_, str.data(), str.size()) !=
+        static_cast<ssize_t>(str.size())) {
+      throw std::system_error(errno, std::system_category(), "write");
+    }
+  }
 };
 
 static Logger TestLogger{"/tmp/benchmark_logger"};
