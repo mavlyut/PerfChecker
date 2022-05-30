@@ -31,12 +31,11 @@ public:
   void Write(const std::string& msg) const {
     size_t i = 0;
     for (; i + BUFSIZE < msg.size(); i += BUFSIZE) {
-      strncpy(buf, msg.data() + i, BUFSIZE);
+      strcpy(buf, msg.data() + i);
       write_buf(buf);
     }
-    size_t small_size = msg.size() % BUFSIZE;
-    strncpy(buf, msg.data() + i, small_size);
-    write_buf(buf, small_size);
+    strcpy(buf, msg.data() + i);
+    write_buf(buf, msg.size() % BUFSIZE);
   }
 
   void write_buf(const char* msg, size_t _size = BUFSIZE) const {
