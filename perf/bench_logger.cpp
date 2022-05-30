@@ -40,13 +40,6 @@ public:
     }
   }
 
-  void Write(const std::string& msg) {
-    if (::write(fd_, msg.data(), msg.size()) !=
-        static_cast<ssize_t>(msg.size())) {
-      throw std::system_error(errno, std::system_category(), "write");
-    }
-  }
-
 private:
   int fd_ = -1;
   size_t tmp_buf_size = 0;
