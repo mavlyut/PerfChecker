@@ -7,7 +7,12 @@ struct User {
   std::string username;
 
   std::string to_string() const {
-    return "{\"id\":" + std::to_string(id) + ",\"username\":\"" + username + "\"}";
+    std::string tmp = "{\"id\":";
+    tmp += std::to_string(id);
+    tmp += ",\"username\":\"";
+    tmp += username;
+    tmp += "\"}";
+    return tmp;
   }
 };
 
@@ -28,7 +33,18 @@ struct Message {
   User from, to;
 
   std::string to_string() const {
-    return "{\"id\":" + std::to_string(id) + ",\"subject\":\"" + subject + "\",\"body\":\"" + body + "\",\"from\":" + from.to_string() + ",\"to\":" + to.to_string() + "}";
+    std::string tmp = "{\"id\":";
+    tmp += std::to_string(id);
+    tmp += ",\"subject\":\"";
+    tmp += subject;
+    tmp += "\",\"body\":\"";
+    tmp += body;
+    tmp += "\",\"from\":";
+    tmp += from.to_string();
+    tmp += ",\"to\":";
+    tmp += to.to_string();
+    tmp += "}";
+    return tmp;
   }
 };
 
@@ -49,7 +65,7 @@ void BM_MessageToJson(benchmark::State& state) {
 
   auto json = ToJson(msg);
   std::string expected =
-      R"({"id":1000,"subject":"About modules","body":"So, when is that 'modules' proposal coming?","from":{"id":12345,"username":"Herb Sutter"},"to":{"id":1,"username":"Biern Stroustrup"}})";
+    R"({"id":1000,"subject":"About modules","body":"So, when is that 'modules' proposal coming?","from":{"id":12345,"username":"Herb Sutter"},"to":{"id":1,"username":"Biern Stroustrup"}})";
   if (json != expected) {
     state.SkipWithError("Wrong output");
   }
